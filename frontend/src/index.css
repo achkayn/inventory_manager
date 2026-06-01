@@ -1,0 +1,27 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    @apply bg-slate-50 text-slate-900 antialiased;
+  }
+
+  body {
+    @apply min-h-screen bg-slate-50 font-sans;
+  }
+
+  * {
+    @apply border-slate-200;
+  }
+
+  ::selection {
+    background: rgba(15, 23, 42, 0.12);
+  }
+}
+
+@layer components {
+  .card {
+    @apply rounded-3xl border border-slate-200 bg-white shadow-sm;
+  }
+}
