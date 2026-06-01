@@ -54,7 +54,7 @@ const Sidebar = ({ open = false, onClose }) => (
         </nav>
 
         <div className="border-t border-white/10 px-6 py-5 text-xs text-slate-400">
-          Connected to a Jakarta EE REST backend with mock fallback.
+          Connected to the live REST backend.
         </div>
       </div>
     </aside>

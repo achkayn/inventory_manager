@@ -6,6 +6,8 @@ import com.inventorymanager.product.Product;
 import com.inventorymanager.supplier.Supplier;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -38,6 +40,8 @@ public class Order {
 	private Product product;
 
 	private Integer quantity;
+
+	@Enumerated(EnumType.STRING)
 	private OrderStatus status;
 	private LocalDateTime createdAt;
 }

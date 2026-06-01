@@ -6,7 +6,7 @@ import { FieldLabel, SelectInput, TextInput } from '../../components/Input';
 const initialForm = {
   supplierId: '',
   productId: '',
-  qty: '',
+  quantity: '',
 };
 
 const OrderModal = ({ open, suppliers, products, onClose, onSubmit, loading }) => {
@@ -18,7 +18,11 @@ const OrderModal = ({ open, suppliers, products, onClose, onSubmit, loading }) =
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    onSubmit({ ...form, qty: Number(form.qty) });
+    onSubmit({
+      supplierId: Number(form.supplierId),
+      productId: Number(form.productId),
+      quantity: Number(form.quantity),
+    });
   };
 
   return (
@@ -62,8 +66,8 @@ const OrderModal = ({ open, suppliers, products, onClose, onSubmit, loading }) =
             id="order-qty"
             type="number"
             min="1"
-            value={form.qty}
-            onChange={(event) => setForm({ ...form, qty: event.target.value })}
+            value={form.quantity}
+            onChange={(event) => setForm({ ...form, quantity: event.target.value })}
             required
           />
         </div>

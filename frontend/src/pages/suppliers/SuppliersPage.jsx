@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { createSupplier, deleteSupplier, listSuppliers, updateSupplier } from '../../api/suppliers';
-import Badge from '../../components/Badge';
 import Button from '../../components/Button';
 import ConfirmDialog from '../../components/ConfirmDialog';
 import ErrorState from '../../components/ErrorState';
@@ -70,10 +69,9 @@ const SuppliersPage = () => {
 
   const columns = [
     { key: 'name', label: 'Name' },
-    { key: 'company', label: 'Company' },
     { key: 'email', label: 'Email' },
     { key: 'phone', label: 'Phone' },
-    { key: 'products', label: 'Products' },
+    { key: 'address', label: 'Address' },
     { key: 'actions', label: 'Actions', className: 'text-right' },
   ];
 
@@ -111,12 +109,9 @@ const SuppliersPage = () => {
         renderRow={(supplier) => (
           <tr key={supplier.id}>
             <td className="px-4 py-4 text-sm font-medium text-slate-900">{supplier.name}</td>
-            <td className="px-4 py-4 text-sm text-slate-600">{supplier.company || '-'}</td>
             <td className="px-4 py-4 text-sm text-slate-600">{supplier.email || '-'}</td>
             <td className="px-4 py-4 text-sm text-slate-600">{supplier.phone || '-'}</td>
-            <td className="px-4 py-4">
-              <Badge tone="indigo">{supplier.productCount || 0} Products</Badge>
-            </td>
+            <td className="px-4 py-4 text-sm text-slate-600">{supplier.address || '-'}</td>
             <td className="px-4 py-4 text-right">
               <div className="flex justify-end gap-2">
                 <Button

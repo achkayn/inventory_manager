@@ -7,15 +7,13 @@ import { LOW_STOCK_THRESHOLD } from '../../constants';
 const initialForm = {
   name: '',
   categoryId: '',
-  supplierId: '',
-  sku: '',
   price: '',
   stockQty: '',
-  threshold: LOW_STOCK_THRESHOLD,
+  lowStockThreshold: LOW_STOCK_THRESHOLD,
   description: '',
 };
 
-const ProductModal = ({ open, product, categories, suppliers, onClose, onSubmit, loading }) => {
+const ProductModal = ({ open, product, categories, onClose, onSubmit, loading }) => {
   const [form, setForm] = useState(initialForm);
 
   useEffect(() => {
@@ -23,11 +21,9 @@ const ProductModal = ({ open, product, categories, suppliers, onClose, onSubmit,
       setForm({
         name: product.name || '',
         categoryId: product.categoryId || '',
-        supplierId: product.supplierId || '',
-        sku: product.sku || '',
         price: product.price ?? '',
         stockQty: product.stockQty ?? '',
-        threshold: product.threshold ?? LOW_STOCK_THRESHOLD,
+        lowStockThreshold: product.lowStockThreshold ?? LOW_STOCK_THRESHOLD,
         description: product.description || '',
       });
     } else {
@@ -43,9 +39,10 @@ const ProductModal = ({ open, product, categories, suppliers, onClose, onSubmit,
     event.preventDefault();
     onSubmit({
       ...form,
+      categoryId: Number(form.categoryId),
       price: Number(form.price),
       stockQty: Number(form.stockQty),
-      threshold: Number(form.threshold),
+      lowStockThreshold: Number(form.lowStockThreshold),
     });
   };
 
@@ -71,26 +68,6 @@ const ProductModal = ({ open, product, categories, suppliers, onClose, onSubmit,
               </option>
             ))}
           </SelectInput>
-        </div>
-        <div>
-          <FieldLabel htmlFor="product-supplier">Supplier</FieldLabel>
-          <SelectInput
-            id="product-supplier"
-            value={form.supplierId}
-            onChange={handleChange('supplierId')}
-            required
-          >
-            <option value="">Select supplier</option>
-            {suppliers.map((supplier) => (
-              <option key={supplier.id} value={supplier.id}>
-                {supplier.name}
-              </option>
-            ))}
-          </SelectInput>
-        </div>
-        <div>
-          <FieldLabel htmlFor="product-sku">SKU</FieldLabel>
-          <TextInput id="product-sku" value={form.sku} onChange={handleChange('sku')} />
         </div>
         <div>
           <FieldLabel htmlFor="product-price">Price</FieldLabel>
@@ -121,8 +98,8 @@ const ProductModal = ({ open, product, categories, suppliers, onClose, onSubmit,
             id="product-threshold"
             type="number"
             min="0"
-            value={form.threshold}
-            onChange={handleChange('threshold')}
+            value={form.lowStockThreshold}
+            onChange={handleChange('lowStockThreshold')}
             required
           />
         </div>

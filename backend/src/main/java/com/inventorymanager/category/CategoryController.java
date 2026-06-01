@@ -27,26 +27,31 @@ public class CategoryController {
 
 	@GetMapping
 	public ResponseEntity<ApiResponse<List<CategoryResponse>>> getAllCategories() {
-		return null;
+		List<CategoryResponse> categories = categoryService.getAllCategories();
+		return ResponseEntity.ok(new ApiResponse<>(true, "Categories retrieved successfully", categories));
 	}
 
 	@GetMapping("/{id}")
 	public ResponseEntity<ApiResponse<CategoryResponse>> getCategoryById(@PathVariable Long id) {
-		return null;
+		CategoryResponse response = categoryService.getCategoryById(id);
+		return ResponseEntity.ok(new ApiResponse<>(true, "Category retrieved successfully", response));
 	}
 
 	@PostMapping
 	public ResponseEntity<ApiResponse<CategoryResponse>> createCategory(@RequestBody CategoryRequest request) {
-		return null;
+		CategoryResponse response = categoryService.createCategory(request);
+		return ResponseEntity.ok(new ApiResponse<>(true, "Category created successfully", response));
 	}
 
 	@PutMapping("/{id}")
 	public ResponseEntity<ApiResponse<CategoryResponse>> updateCategory(@PathVariable Long id, @RequestBody CategoryRequest request) {
-		return null;
+		CategoryResponse response = categoryService.updateCategory(id, request);
+		return ResponseEntity.ok(new ApiResponse<>(true, "Category updated successfully", response));
 	}
 
 	@DeleteMapping("/{id}")
 	public ResponseEntity<ApiResponse<Void>> deleteCategory(@PathVariable Long id) {
-		return null;
+		categoryService.deleteCategory(id);
+		return ResponseEntity.ok(new ApiResponse<>(true, "Category deleted successfully", null));
 	}
 }

@@ -27,26 +27,31 @@ public class SupplierController {
 
 	@GetMapping
 	public ResponseEntity<ApiResponse<List<SupplierResponse>>> getAllSuppliers() {
-		return null;
+		List<SupplierResponse> suppliers = supplierService.getAllSuppliers();
+		return ResponseEntity.ok(new ApiResponse<>(true, "Suppliers retrieved successfully", suppliers));
 	}
 
 	@GetMapping("/{id}")
 	public ResponseEntity<ApiResponse<SupplierResponse>> getSupplierById(@PathVariable Long id) {
-		return null;
+		SupplierResponse response = supplierService.getSupplierById(id);
+		return ResponseEntity.ok(new ApiResponse<>(true, "Supplier retrieved successfully", response));
 	}
 
 	@PostMapping
 	public ResponseEntity<ApiResponse<SupplierResponse>> createSupplier(@RequestBody SupplierRequest request) {
-		return null;
+		SupplierResponse response = supplierService.createSupplier(request);
+		return ResponseEntity.ok(new ApiResponse<>(true, "Supplier created successfully", response));
 	}
 
 	@PutMapping("/{id}")
 	public ResponseEntity<ApiResponse<SupplierResponse>> updateSupplier(@PathVariable Long id, @RequestBody SupplierRequest request) {
-		return null;
+		SupplierResponse response = supplierService.updateSupplier(id, request);
+		return ResponseEntity.ok(new ApiResponse<>(true, "Supplier updated successfully", response));
 	}
 
 	@DeleteMapping("/{id}")
 	public ResponseEntity<ApiResponse<Void>> deleteSupplier(@PathVariable Long id) {
-		return null;
+		supplierService.deleteSupplier(id);
+		return ResponseEntity.ok(new ApiResponse<>(true, "Supplier deleted successfully", null));
 	}
 }

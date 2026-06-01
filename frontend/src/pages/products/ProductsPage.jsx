@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { createProduct, deleteProduct, listProducts, updateProduct } from '../../api/products';
 import { listCategories } from '../../api/categories';
-import { listSuppliers } from '../../api/suppliers';
 import Badge from '../../components/Badge';
 import Button from '../../components/Button';
 import ConfirmDialog from '../../components/ConfirmDialog';
@@ -11,12 +10,10 @@ import PageHeader from '../../components/PageHeader';
 import Table from '../../components/Table';
 import { formatCurrency } from '../../utils/format';
 import ProductModal from './ProductModal';
-import { LOW_STOCK_THRESHOLD } from '../../constants';
 
 const ProductsPage = () => {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
-  const [suppliers, setSuppliers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [modalOpen, setModalOpen] = useState(false);
@@ -29,14 +26,12 @@ const ProductsPage = () => {
     setLoading(true);
     setError('');
     try {
-      const [productsData, categoriesData, suppliersData] = await Promise.all([
+      const [productsData, categoriesData] = await Promise.all([
         listProducts(),
         listCategories(),
-        listSuppliers(),
       ]);
       setProducts(productsData);
       setCategories(categoriesData);
-      setSuppliers(suppliersData);
     } catch (err) {
       setError(err?.response?.data?.message || err.message || 'Unable to load products');
     } finally {
@@ -126,12 +121,10 @@ const ProductsPage = () => {
         columns={columns}
         data={products}
         renderRow={(product) => {
-          const threshold = Number(product.threshold || LOW_STOCK_THRESHOLD);
-          const lowStock = Number(product.stockQty) < threshold;
           return (
             <tr
               key={product.id}
-              className={lowStock ? 'bg-rose-50/60' : 'bg-white'}
+              className={product.isLowStock ? 'bg-rose-50/60' : 'bg-white'}
             >
               <td className="px-4 py-4 text-sm font-medium text-slate-900">{product.name}</td>
               <td className="px-4 py-4 text-sm text-slate-600">
@@ -139,12 +132,12 @@ const ProductsPage = () => {
               </td>
               <td className="px-4 py-4 text-sm text-slate-600">{formatCurrency(product.price)}</td>
               <td className="px-4 py-4 text-sm text-slate-600">
-                <span className={lowStock ? 'font-semibold text-rose-700' : ''}>
+                <span className={product.isLowStock ? 'font-semibold text-rose-700' : ''}>
                   {product.stockQty}
                 </span>
               </td>
               <td className="px-4 py-4">
-                {lowStock ? <Badge tone="red">Low Stock</Badge> : <Badge tone="green">OK</Badge>}
+                {product.isLowStock ? <Badge tone="red">Low Stock</Badge> : <Badge tone="green">OK</Badge>}
               </td>
               <td className="px-4 py-4 text-right">
                 <div className="flex justify-end gap-2">
@@ -174,7 +167,6 @@ const ProductsPage = () => {
         open={modalOpen}
         product={editingProduct}
         categories={categories}
-        suppliers={suppliers}
         onClose={() => {
           setModalOpen(false);
           setEditingProduct(null);

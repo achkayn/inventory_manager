@@ -8,9 +8,9 @@ import {
   XAxis,
   YAxis,
 } from 'recharts';
-import { getDashboardSummary, getCategoryStock } from '../../api/dashboard';
+import { getDashboardSummary } from '../../api/dashboard';
+import { listProducts } from '../../api/products';
 import ErrorState from '../../components/ErrorState';
-import LoadingState from '../../components/LoadingState';
 import PageHeader from '../../components/PageHeader';
 import StatCard from '../../components/StatCard';
 
@@ -24,12 +24,19 @@ const DashboardPage = () => {
     setLoading(true);
     setError('');
     try {
-      const [summaryData, categoryStockData] = await Promise.all([
+      const [summaryData, productsData] = await Promise.all([
         getDashboardSummary(),
-        getCategoryStock(),
+        listProducts(),
       ]);
       setSummary(summaryData);
-      setCategoryStock(categoryStockData);
+      const grouped = productsData.reduce((acc, product) => {
+        const key = product.categoryName || 'Uncategorized';
+        const existing = acc[key] || { name: key, stockQty: 0 };
+        existing.stockQty += Number(product.stockQty || 0);
+        acc[key] = existing;
+        return acc;
+      }, {});
+      setCategoryStock(Object.values(grouped));
     } catch (err) {
       setError(err?.response?.data?.message || err.message || 'Unable to load dashboard');
     } finally {
@@ -40,10 +47,6 @@ const DashboardPage = () => {
   useEffect(() => {
     loadData();
   }, []);
-
-  if (loading) {
-    return <LoadingState label="Loading dashboard..." />;
-  }
 
   if (error) {
     return <ErrorState message={error} onRetry={loadData} />;
@@ -57,10 +60,23 @@ const DashboardPage = () => {
       />
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <StatCard label="Total Products" value={summary?.totalProducts ?? 0} tone="slate" />
-        <StatCard label="Low Stock Items" value={summary?.lowStockItems ?? 0} tone="amber" />
-        <StatCard label="Pending Orders" value={summary?.pendingOrders ?? 0} tone="sky" />
-        <StatCard label="Total Suppliers" value={summary?.totalSuppliers ?? 0} tone="emerald" />
+        {loading ? (
+          <>
+            {['', '', '', ''].map((item, index) => (
+              <div
+                key={index}
+                className="h-28 animate-pulse rounded-3xl border border-slate-200 bg-white/80"
+              />
+            ))}
+          </>
+        ) : (
+          <>
+            <StatCard label="Total Products" value={summary?.totalProducts ?? 0} tone="slate" />
+            <StatCard label="Low Stock Items" value={summary?.lowStockItems ?? 0} tone="amber" />
+            <StatCard label="Pending Orders" value={summary?.pendingOrders ?? 0} tone="sky" />
+            <StatCard label="Total Suppliers" value={summary?.totalSuppliers ?? 0} tone="emerald" />
+          </>
+        )}
       </div>
 
       <div className="mt-6 rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
@@ -86,6 +102,8 @@ const DashboardPage = () => {
           </ResponsiveContainer>
         </div>
       </div>
+
+      {loading ? <div className="mt-4 text-sm text-slate-500">Loading chart data...</div> : null}
     </div>
   );
 };

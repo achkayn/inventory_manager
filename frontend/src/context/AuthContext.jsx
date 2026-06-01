@@ -38,10 +38,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const register = async (payload) => {
-    const result = await apiRegister(payload);
-    setToken(result.token);
-    setUser(result.user);
-    return result;
+    return apiRegister(payload);
   };
 
   const logout = () => {

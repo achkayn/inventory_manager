@@ -8,5 +8,5 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
 	List<Product> findByCategoryId(Long categoryId);
 
-	List<Product> findByStockQtyLessThan(Integer stockQty);
+	List<Product> findByStockQtyLessThan(int stockQty);
 }

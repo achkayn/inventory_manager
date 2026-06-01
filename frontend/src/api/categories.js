@@ -3,13 +3,14 @@ import { USE_MOCK, AUTH_TOKEN_KEY } from '../constants';
 import { mockStore } from './mockStore';
 
 const getToken = () => localStorage.getItem(AUTH_TOKEN_KEY);
+const unwrap = (response) => response.data.data;
 
 export const listCategories = async () => {
   if (USE_MOCK) {
     return mockStore.categories.list(getToken());
   }
   const response = await api.get('/categories');
-  return response.data;
+  return unwrap(response);
 };
 
 export const createCategory = async (payload) => {
@@ -17,7 +18,7 @@ export const createCategory = async (payload) => {
     return mockStore.categories.create(getToken(), payload);
   }
   const response = await api.post('/categories', payload);
-  return response.data;
+  return unwrap(response);
 };
 
 export const updateCategory = async (id, payload) => {
@@ -25,7 +26,7 @@ export const updateCategory = async (id, payload) => {
     return mockStore.categories.update(getToken(), id, payload);
   }
   const response = await api.put(`/categories/${id}`, payload);
-  return response.data;
+  return unwrap(response);
 };
 
 export const deleteCategory = async (id) => {
@@ -33,5 +34,5 @@ export const deleteCategory = async (id) => {
     return mockStore.categories.remove(getToken(), id);
   }
   const response = await api.delete(`/categories/${id}`);
-  return response.data;
+  return unwrap(response);
 };

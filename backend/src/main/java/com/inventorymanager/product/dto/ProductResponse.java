@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Getter
 @Setter
@@ -21,5 +22,6 @@ public class ProductResponse {
 	private Integer lowStockThreshold;
 	private Long categoryId;
 	private String categoryName;
+	@JsonProperty("isLowStock")
 	private boolean lowStock;
 }

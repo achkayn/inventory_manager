@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -27,26 +28,38 @@ public class ProductController {
 
 	@GetMapping
 	public ResponseEntity<ApiResponse<List<ProductResponse>>> getAllProducts() {
-		return null;
+		List<ProductResponse> products = productService.getAllProducts();
+		return ResponseEntity.ok(new ApiResponse<>(true, "Products retrieved successfully", products));
+	}
+
+	@GetMapping("/low-stock")
+	public ResponseEntity<ApiResponse<List<ProductResponse>>> getLowStockProducts(
+			@RequestParam(defaultValue = "25") int threshold) {
+		List<ProductResponse> products = productService.getLowStockProducts(threshold);
+		return ResponseEntity.ok(new ApiResponse<>(true, "Low stock products retrieved successfully", products));
 	}
 
 	@GetMapping("/{id}")
 	public ResponseEntity<ApiResponse<ProductResponse>> getProductById(@PathVariable Long id) {
-		return null;
+		ProductResponse response = productService.getProductById(id);
+		return ResponseEntity.ok(new ApiResponse<>(true, "Product retrieved successfully", response));
 	}
 
 	@PostMapping
 	public ResponseEntity<ApiResponse<ProductResponse>> createProduct(@RequestBody ProductRequest request) {
-		return null;
+		ProductResponse response = productService.createProduct(request);
+		return ResponseEntity.ok(new ApiResponse<>(true, "Product created successfully", response));
 	}
 
 	@PutMapping("/{id}")
 	public ResponseEntity<ApiResponse<ProductResponse>> updateProduct(@PathVariable Long id, @RequestBody ProductRequest request) {
-		return null;
+		ProductResponse response = productService.updateProduct(id, request);
+		return ResponseEntity.ok(new ApiResponse<>(true, "Product updated successfully", response));
 	}
 
 	@DeleteMapping("/{id}")
 	public ResponseEntity<ApiResponse<Void>> deleteProduct(@PathVariable Long id) {
-		return null;
+		productService.deleteProduct(id);
+		return ResponseEntity.ok(new ApiResponse<>(true, "Product deleted successfully", null));
 	}
 }

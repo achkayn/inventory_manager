@@ -12,21 +12,24 @@ import Table from '../../components/Table';
 import OrderModal from './OrderModal';
 
 const nextStatus = {
-  Pending: 'Confirmed',
-  Confirmed: 'Delivered',
-  Delivered: 'Delivered',
+  PENDING: 'CONFIRMED',
+  CONFIRMED: 'DELIVERED',
+  DELIVERED: 'DELIVERED',
 };
 
 const statusTone = {
-  Pending: 'yellow',
-  Confirmed: 'blue',
-  Delivered: 'green',
+  PENDING: 'yellow',
+  CONFIRMED: 'blue',
+  DELIVERED: 'green',
 };
+
+const statusFilters = ['ALL', 'PENDING', 'CONFIRMED', 'DELIVERED'];
 
 const OrdersPage = () => {
   const [orders, setOrders] = useState([]);
   const [products, setProducts] = useState([]);
   const [suppliers, setSuppliers] = useState([]);
+  const [statusFilter, setStatusFilter] = useState('ALL');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [modalOpen, setModalOpen] = useState(false);
@@ -40,7 +43,7 @@ const OrdersPage = () => {
     setError('');
     try {
       const [ordersData, productsData, suppliersData] = await Promise.all([
-        listOrders(),
+        listOrders(statusFilter === 'ALL' ? undefined : statusFilter),
         listProducts(),
         listSuppliers(),
       ]);
@@ -56,7 +59,7 @@ const OrdersPage = () => {
 
   useEffect(() => {
     loadData();
-  }, []);
+  }, [statusFilter]);
 
   const productLookup = useMemo(
     () => Object.fromEntries(products.map((product) => [product.id, product.name])),
@@ -77,7 +80,7 @@ const OrdersPage = () => {
   };
 
   const handleAdvanceStatus = async (order) => {
-    const status = nextStatus[order.status] || 'Delivered';
+    const status = nextStatus[order.status] || 'DELIVERED';
     setStatusSavingId(order.id);
     try {
       await updateOrderStatus(order.id, status);
@@ -107,7 +110,7 @@ const OrdersPage = () => {
     { key: 'id', label: 'Order ID' },
     { key: 'supplier', label: 'Supplier' },
     { key: 'product', label: 'Product' },
-    { key: 'qty', label: 'Qty' },
+    { key: 'quantity', label: 'Qty' },
     { key: 'status', label: 'Status' },
     { key: 'actions', label: 'Actions', className: 'text-right' },
   ];
@@ -132,6 +135,18 @@ const OrdersPage = () => {
         ]}
       />
 
+      <div className="mb-4 flex flex-wrap gap-2">
+        {statusFilters.map((filter) => (
+          <Button
+            key={filter}
+            variant={statusFilter === filter ? 'primary' : 'secondary'}
+            onClick={() => setStatusFilter(filter)}
+          >
+            {filter === 'ALL' ? 'All' : filter}
+          </Button>
+        ))}
+      </div>
+
       {error ? <div className="mb-4"><ErrorState message={error} onRetry={loadData} /></div> : null}
 
       <Table
@@ -144,13 +159,13 @@ const OrdersPage = () => {
             <td className="px-4 py-4 text-sm text-slate-600">
               {order.productName || productLookup[order.productId] || '-'}
             </td>
-            <td className="px-4 py-4 text-sm text-slate-600">{order.qty}</td>
+            <td className="px-4 py-4 text-sm text-slate-600">{order.quantity}</td>
             <td className="px-4 py-4">
               <Badge tone={statusTone[order.status] || 'gray'}>{order.status}</Badge>
             </td>
             <td className="px-4 py-4 text-right">
               <div className="flex justify-end gap-2">
-                {order.status !== 'Delivered' ? (
+                {order.status !== 'DELIVERED' ? (
                   <Button
                     variant="secondary"
                     onClick={() => handleAdvanceStatus(order)}

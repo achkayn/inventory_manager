@@ -26,7 +26,7 @@ const RegisterPage = () => {
     setError('');
     try {
       await register(form);
-      navigate('/', { replace: true });
+      navigate('/login', { replace: true });
     } catch (err) {
       setError(err?.response?.data?.message || err.message || 'Registration failed');
     } finally {
