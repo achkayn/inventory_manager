@@ -8,8 +8,7 @@ import {
   XAxis,
   YAxis,
 } from 'recharts';
-import { getDashboardSummary } from '../../api/dashboard';
-import { listProducts } from '../../api/products';
+import { getDashboardCategoryStock, getDashboardSummary } from '../../api/dashboard';
 import ErrorState from '../../components/ErrorState';
 import PageHeader from '../../components/PageHeader';
 import StatCard from '../../components/StatCard';
@@ -24,19 +23,12 @@ const DashboardPage = () => {
     setLoading(true);
     setError('');
     try {
-      const [summaryData, productsData] = await Promise.all([
+      const [summaryData, categoryStockData] = await Promise.all([
         getDashboardSummary(),
-        listProducts(),
+        getDashboardCategoryStock(),
       ]);
       setSummary(summaryData);
-      const grouped = productsData.reduce((acc, product) => {
-        const key = product.categoryName || 'Uncategorized';
-        const existing = acc[key] || { name: key, stockQty: 0 };
-        existing.stockQty += Number(product.stockQty || 0);
-        acc[key] = existing;
-        return acc;
-      }, {});
-      setCategoryStock(Object.values(grouped));
+      setCategoryStock(categoryStockData);
     } catch (err) {
       setError(err?.response?.data?.message || err.message || 'Unable to load dashboard');
     } finally {

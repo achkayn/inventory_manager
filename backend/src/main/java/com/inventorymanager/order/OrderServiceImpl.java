@@ -66,6 +66,15 @@ public class OrderServiceImpl implements OrderService {
 	@Transactional
 	public OrderResponse updateStatus(Long id, OrderStatus status) {
 		Order order = findOrder(id);
+		if (status == OrderStatus.DELIVERED) {
+			Product product = order.getProduct();
+			int updatedStockQty = product.getStockQty() - order.getQuantity();
+			if (updatedStockQty < 0) {
+				throw new IllegalStateException("Insufficient stock");
+			}
+			product.setStockQty(updatedStockQty);
+			productRepository.save(product);
+		}
 		order.setStatus(status);
 		return toResponse(orderRepository.save(order));
 	}

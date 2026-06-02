@@ -13,7 +13,7 @@ export const getDashboardSummary = async () => {
   return unwrap(response);
 };
 
-export const getCategoryStock = async () => {
+export const getDashboardCategoryStock = async () => {
   if (USE_MOCK) {
     return mockStore.dashboard.categoryStock(getToken());
   }
