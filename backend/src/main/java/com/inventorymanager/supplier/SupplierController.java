@@ -5,6 +5,7 @@ import java.util.List;
 import com.inventorymanager.common.ApiResponse;
 import com.inventorymanager.supplier.dto.SupplierRequest;
 import com.inventorymanager.supplier.dto.SupplierResponse;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,30 +27,35 @@ public class SupplierController {
 	}
 
 	@GetMapping
+	@PreAuthorize("isAuthenticated()")
 	public ResponseEntity<ApiResponse<List<SupplierResponse>>> getAllSuppliers() {
 		List<SupplierResponse> suppliers = supplierService.getAllSuppliers();
 		return ResponseEntity.ok(new ApiResponse<>(true, "Suppliers retrieved successfully", suppliers));
 	}
 
 	@GetMapping("/{id}")
+	@PreAuthorize("isAuthenticated()")
 	public ResponseEntity<ApiResponse<SupplierResponse>> getSupplierById(@PathVariable Long id) {
 		SupplierResponse response = supplierService.getSupplierById(id);
 		return ResponseEntity.ok(new ApiResponse<>(true, "Supplier retrieved successfully", response));
 	}
 
 	@PostMapping
+	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 	public ResponseEntity<ApiResponse<SupplierResponse>> createSupplier(@RequestBody SupplierRequest request) {
 		SupplierResponse response = supplierService.createSupplier(request);
 		return ResponseEntity.ok(new ApiResponse<>(true, "Supplier created successfully", response));
 	}
 
 	@PutMapping("/{id}")
+	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 	public ResponseEntity<ApiResponse<SupplierResponse>> updateSupplier(@PathVariable Long id, @RequestBody SupplierRequest request) {
 		SupplierResponse response = supplierService.updateSupplier(id, request);
 		return ResponseEntity.ok(new ApiResponse<>(true, "Supplier updated successfully", response));
 	}
 
 	@DeleteMapping("/{id}")
+	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 	public ResponseEntity<ApiResponse<Void>> deleteSupplier(@PathVariable Long id) {
 		supplierService.deleteSupplier(id);
 		return ResponseEntity.ok(new ApiResponse<>(true, "Supplier deleted successfully", null));

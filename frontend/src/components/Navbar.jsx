@@ -3,7 +3,7 @@ import Button from './Button';
 import { useAuth } from '../context/AuthContext';
 
 const Navbar = ({ onMenuClick }) => {
-  const { user, logout } = useAuth();
+  const { user, logout, isAdmin } = useAuth();
 
   return (
     <header className="border-b border-slate-200 bg-white px-4 py-4 sm:px-6">
@@ -25,7 +25,15 @@ const Navbar = ({ onMenuClick }) => {
 
         <div className="flex items-center gap-3">
           <div className="hidden text-right sm:block">
-            <p className="text-sm font-semibold text-slate-900">{user?.name || 'User'}</p>
+            <p className="text-sm font-semibold text-slate-900">
+              {user?.name || 'User'}
+              {isAdmin && (
+                <span className="ml-2 rounded-full bg-indigo-100 px-2 py-0.5 text-xs font-medium text-indigo-700">Admin</span>
+              )}
+              {!isAdmin && (
+                <span className="ml-2 rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-600">Employee</span>
+              )}
+            </p>
             <p className="text-xs text-slate-500">{user?.email || 'Signed in'}</p>
           </div>
           <Button variant="secondary" onClick={logout}>

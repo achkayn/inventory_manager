@@ -5,6 +5,7 @@ import java.util.List;
 import com.inventorymanager.category.dto.CategoryRequest;
 import com.inventorymanager.category.dto.CategoryResponse;
 import com.inventorymanager.common.ApiResponse;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,30 +27,35 @@ public class CategoryController {
 	}
 
 	@GetMapping
+	@PreAuthorize("isAuthenticated()")
 	public ResponseEntity<ApiResponse<List<CategoryResponse>>> getAllCategories() {
 		List<CategoryResponse> categories = categoryService.getAllCategories();
 		return ResponseEntity.ok(new ApiResponse<>(true, "Categories retrieved successfully", categories));
 	}
 
 	@GetMapping("/{id}")
+	@PreAuthorize("isAuthenticated()")
 	public ResponseEntity<ApiResponse<CategoryResponse>> getCategoryById(@PathVariable Long id) {
 		CategoryResponse response = categoryService.getCategoryById(id);
 		return ResponseEntity.ok(new ApiResponse<>(true, "Category retrieved successfully", response));
 	}
 
 	@PostMapping
+	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 	public ResponseEntity<ApiResponse<CategoryResponse>> createCategory(@RequestBody CategoryRequest request) {
 		CategoryResponse response = categoryService.createCategory(request);
 		return ResponseEntity.ok(new ApiResponse<>(true, "Category created successfully", response));
 	}
 
 	@PutMapping("/{id}")
+	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 	public ResponseEntity<ApiResponse<CategoryResponse>> updateCategory(@PathVariable Long id, @RequestBody CategoryRequest request) {
 		CategoryResponse response = categoryService.updateCategory(id, request);
 		return ResponseEntity.ok(new ApiResponse<>(true, "Category updated successfully", response));
 	}
 
 	@DeleteMapping("/{id}")
+	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 	public ResponseEntity<ApiResponse<Void>> deleteCategory(@PathVariable Long id) {
 		categoryService.deleteCategory(id);
 		return ResponseEntity.ok(new ApiResponse<>(true, "Category deleted successfully", null));

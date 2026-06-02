@@ -1,7 +1,8 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
-const links = [
+const BASE_LINKS = [
   { to: '/', label: 'Dashboard' },
   { to: '/products', label: 'Products' },
   { to: '/categories', label: 'Categories' },
@@ -9,7 +10,10 @@ const links = [
   { to: '/orders', label: 'Orders' },
 ];
 
-const Sidebar = ({ open = false, onClose }) => (
+const Sidebar = ({ open = false, onClose }) => {
+  const { isAdmin } = useAuth();
+  const links = isAdmin ? [...BASE_LINKS, { to: '/users', label: 'Users' }] : BASE_LINKS;
+  return (
   <>
     <div
       className={`fixed inset-0 z-30 bg-slate-950/40 transition-opacity lg:hidden ${
@@ -59,6 +63,7 @@ const Sidebar = ({ open = false, onClose }) => (
       </div>
     </aside>
   </>
-);
+  );
+};
 
 export default Sidebar;

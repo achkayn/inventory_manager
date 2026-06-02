@@ -3,6 +3,7 @@ package com.inventorymanager.common;
 import java.time.LocalDateTime;
 
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -45,6 +46,15 @@ public class GlobalExceptionHandler {
 		errorResponse.setStatus(HttpStatus.BAD_REQUEST.value());
 		errorResponse.setTimestamp(LocalDateTime.now());
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+	}
+
+	@ExceptionHandler(AccessDeniedException.class)
+	public ResponseEntity<ErrorResponse> handleAccessDeniedException(AccessDeniedException ex) {
+		ErrorResponse errorResponse = new ErrorResponse();
+		errorResponse.setMessage("Access denied: insufficient permissions");
+		errorResponse.setStatus(HttpStatus.FORBIDDEN.value());
+		errorResponse.setTimestamp(LocalDateTime.now());
+		return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResponse);
 	}
 
 	@ExceptionHandler(Exception.class)
