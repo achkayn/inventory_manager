@@ -408,7 +408,7 @@ Passwords are hashed with `BCryptPasswordEncoder`. Tokens are signed with HMAC-S
 ```bash
 # Build and run
 mvn clean package -DskipTests
-java -jar target/inventory-manager-0.0.1-SNAPSHOT.jar
+mvn -e spring-boot:run
 
 # Run tests
 mvn test
