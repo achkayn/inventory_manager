@@ -38,6 +38,15 @@ public class GlobalExceptionHandler {
 		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
 	}
 
+	@ExceptionHandler(IllegalStateException.class)
+	public ResponseEntity<ErrorResponse> handleIllegalStateException(IllegalStateException ex) {
+		ErrorResponse errorResponse = new ErrorResponse();
+		errorResponse.setMessage(ex.getMessage());
+		errorResponse.setStatus(HttpStatus.BAD_REQUEST.value());
+		errorResponse.setTimestamp(LocalDateTime.now());
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+	}
+
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<ErrorResponse> handleGenericException(Exception ex) {
 		ErrorResponse errorResponse = new ErrorResponse();
