@@ -5,6 +5,7 @@ import java.util.List;
 import com.inventorymanager.common.ApiResponse;
 import com.inventorymanager.dashboard.dto.CategoryStockResponse;
 import com.inventorymanager.dashboard.dto.DashboardSummaryResponse;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,12 +22,14 @@ public class DashboardController {
 	}
 
 	@GetMapping("/summary")
+	@PreAuthorize("isAuthenticated()")
 	public ResponseEntity<ApiResponse<DashboardSummaryResponse>> getSummary() {
 		DashboardSummaryResponse response = dashboardService.getSummary();
 		return ResponseEntity.ok(new ApiResponse<>(true, "Dashboard summary retrieved successfully", response));
 	}
 
 	@GetMapping("/category-stock")
+	@PreAuthorize("isAuthenticated()")
 	public ResponseEntity<ApiResponse<List<CategoryStockResponse>>> getCategoryStock() {
 		List<CategoryStockResponse> response = dashboardService.getCategoryStock();
 		return ResponseEntity.ok(new ApiResponse<>(true, "Category stock retrieved successfully", response));

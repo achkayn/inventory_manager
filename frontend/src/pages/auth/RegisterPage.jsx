@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
 import Button from '../../components/Button';
-import { FieldLabel, TextInput } from '../../components/Input';
+import { FieldLabel, TextInput, SelectInput } from '../../components/Input';
 import ErrorState from '../../components/ErrorState';
 import { useAuth } from '../../context/AuthContext';
 
@@ -12,6 +12,7 @@ const RegisterPage = () => {
     name: '',
     email: '',
     password: '',
+    role: 'ROLE_USER',
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -91,6 +92,17 @@ const RegisterPage = () => {
                   onChange={(event) => setForm({ ...form, password: event.target.value })}
                   required
                 />
+              </div>
+              <div>
+                <FieldLabel htmlFor="register-role">Role</FieldLabel>
+                <SelectInput
+                  id="register-role"
+                  value={form.role}
+                  onChange={(event) => setForm({ ...form, role: event.target.value })}
+                >
+                  <option value="ROLE_USER">Employee</option>
+                  <option value="ROLE_ADMIN">Admin</option>
+                </SelectInput>
               </div>
               <Button type="submit" className="w-full" disabled={loading}>
                 {loading ? 'Creating account...' : 'Create account'}

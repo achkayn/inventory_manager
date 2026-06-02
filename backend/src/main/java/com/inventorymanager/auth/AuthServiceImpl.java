@@ -3,9 +3,13 @@ package com.inventorymanager.auth;
 import com.inventorymanager.auth.dto.AuthResponse;
 import com.inventorymanager.auth.dto.LoginRequest;
 import com.inventorymanager.auth.dto.RegisterRequest;
+import com.inventorymanager.auth.dto.UserResponse;
 import com.inventorymanager.common.ConflictException;
 import com.inventorymanager.common.UnauthorizedException;
+import jakarta.persistence.EntityNotFoundException;
+import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -52,5 +56,21 @@ public class AuthServiceImpl implements AuthService {
 		User savedUser = userRepository.save(user);
 		String token = jwtUtil.generateToken(savedUser.getEmail(), savedUser.getRole());
 		return new AuthResponse(token, savedUser.getUsername(), savedUser.getEmail(), savedUser.getRole());
+	}
+
+	@Override
+	public List<UserResponse> getAllUsers() {
+		return userRepository.findAll().stream()
+				.map(u -> new UserResponse(u.getId(), u.getUsername(), u.getEmail(), u.getRole()))
+				.collect(Collectors.toList());
+	}
+
+	@Override
+	public UserResponse updateUserRole(Long id, String role) {
+		User user = userRepository.findById(id)
+				.orElseThrow(() -> new EntityNotFoundException("User not found with id " + id));
+		user.setRole(role.toUpperCase(Locale.ROOT));
+		User saved = userRepository.save(user);
+		return new UserResponse(saved.getId(), saved.getUsername(), saved.getEmail(), saved.getRole());
 	}
 }

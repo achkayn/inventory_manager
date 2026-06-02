@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { useAuth } from '../../context/AuthContext';
 import { createOrder, deleteOrder, listOrders, updateOrderStatus } from '../../api/orders';
 import { listProducts } from '../../api/products';
 import { listSuppliers } from '../../api/suppliers';
@@ -26,6 +27,7 @@ const statusTone = {
 const statusFilters = ['ALL', 'PENDING', 'CONFIRMED', 'DELIVERED'];
 
 const OrdersPage = () => {
+  const { isAdmin } = useAuth();
   const [orders, setOrders] = useState([]);
   const [products, setProducts] = useState([]);
   const [suppliers, setSuppliers] = useState([]);
@@ -165,7 +167,7 @@ const OrdersPage = () => {
             </td>
             <td className="px-4 py-4 text-right">
               <div className="flex justify-end gap-2">
-                {order.status !== 'DELIVERED' ? (
+                {isAdmin && order.status !== 'DELIVERED' ? (
                   <Button
                     variant="secondary"
                     onClick={() => handleAdvanceStatus(order)}
@@ -174,9 +176,11 @@ const OrdersPage = () => {
                     {statusSavingId === order.id ? 'Updating...' : `Mark ${nextStatus[order.status]}`}
                   </Button>
                 ) : null}
-                <Button variant="danger" onClick={() => setDeleteTarget(order)}>
-                  Delete
-                </Button>
+                {isAdmin && (
+                  <Button variant="danger" onClick={() => setDeleteTarget(order)}>
+                    Delete
+                  </Button>
+                )}
               </div>
             </td>
           </tr>

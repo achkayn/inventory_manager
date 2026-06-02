@@ -9,6 +9,7 @@ import ProductsPage from './pages/products/ProductsPage';
 import CategoriesPage from './pages/categories/CategoriesPage';
 import SuppliersPage from './pages/suppliers/SuppliersPage';
 import OrdersPage from './pages/orders/OrdersPage';
+import UsersPage from './pages/users/UsersPage';
 
 const App = () => (
   <BrowserRouter>
@@ -22,6 +23,9 @@ const App = () => (
           <Route path="/categories" element={<CategoriesPage />} />
           <Route path="/suppliers" element={<SuppliersPage />} />
           <Route path="/orders" element={<OrdersPage />} />
+          <Route element={<ProtectedRoute requiredRole="ROLE_ADMIN" />}>
+            <Route path="/users" element={<UsersPage />} />
+          </Route>
         </Route>
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />

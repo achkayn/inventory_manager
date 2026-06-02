@@ -53,6 +53,8 @@ export const AuthProvider = ({ children }) => {
       user,
       ready,
       isAuthenticated: Boolean(token),
+      isAdmin: user?.role === 'ROLE_ADMIN',
+      isEmployee: user?.role === 'ROLE_USER',
       login,
       register,
       logout,

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useAuth } from '../../context/AuthContext';
 import { createCategory, deleteCategory, listCategories, updateCategory } from '../../api/categories';
 import { listProducts } from '../../api/products';
 import Badge from '../../components/Badge';
@@ -11,6 +12,7 @@ import Table from '../../components/Table';
 import CategoryModal from './CategoryModal';
 
 const CategoriesPage = () => {
+  const { isAdmin } = useAuth();
   const [categories, setCategories] = useState([]);
   const [productCountLookup, setProductCountLookup] = useState({});
   const [loading, setLoading] = useState(true);
@@ -96,7 +98,7 @@ const CategoriesPage = () => {
       <PageHeader
         title="Categories"
         description="Maintain category metadata used in the product catalog and dashboard chart."
-        actions={[
+        actions={isAdmin ? [
           <Button
             key="add-category"
             onClick={() => {
@@ -106,7 +108,7 @@ const CategoriesPage = () => {
           >
             Add Category
           </Button>,
-        ]}
+        ] : []}
       />
 
       {error ? <div className="mb-4"><ErrorState message={error} onRetry={loadData} /></div> : null}
@@ -123,18 +125,22 @@ const CategoriesPage = () => {
             </td>
             <td className="px-4 py-4 text-right">
               <div className="flex justify-end gap-2">
-                <Button
-                  variant="secondary"
-                  onClick={() => {
-                    setEditingCategory(category);
-                    setModalOpen(true);
-                  }}
-                >
-                  Edit
-                </Button>
-                <Button variant="danger" onClick={() => setDeleteTarget(category)}>
-                  Delete
-                </Button>
+                {isAdmin && (
+                  <Button
+                    variant="secondary"
+                    onClick={() => {
+                      setEditingCategory(category);
+                      setModalOpen(true);
+                    }}
+                  >
+                    Edit
+                  </Button>
+                )}
+                {isAdmin && (
+                  <Button variant="danger" onClick={() => setDeleteTarget(category)}>
+                    Delete
+                  </Button>
+                )}
               </div>
             </td>
           </tr>

@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { useAuth } from '../../context/AuthContext';
 import { createProduct, deleteProduct, listProducts, updateProduct } from '../../api/products';
 import { listCategories } from '../../api/categories';
 import Badge from '../../components/Badge';
@@ -12,6 +13,7 @@ import { formatCurrency } from '../../utils/format';
 import ProductModal from './ProductModal';
 
 const ProductsPage = () => {
+  const { isAdmin } = useAuth();
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -102,7 +104,7 @@ const ProductsPage = () => {
       <PageHeader
         title="Products"
         description="Manage inventory items, keep stock quantities in sync, and surface low-stock alerts."
-        actions={[
+        actions={isAdmin ? [
           <Button
             key="add"
             onClick={() => {
@@ -112,7 +114,7 @@ const ProductsPage = () => {
           >
             Add Product
           </Button>,
-        ]}
+        ] : []}
       />
 
       {error ? <div className="mb-4"><ErrorState message={error} onRetry={loadData} /></div> : null}
@@ -141,21 +143,25 @@ const ProductsPage = () => {
               </td>
               <td className="px-4 py-4 text-right">
                 <div className="flex justify-end gap-2">
-                  <Button
-                    variant="secondary"
-                    onClick={() => {
-                      setEditingProduct(product);
-                      setModalOpen(true);
-                    }}
-                  >
-                    Edit
-                  </Button>
-                  <Button
-                    variant="danger"
-                    onClick={() => setDeleteTarget(product)}
-                  >
-                    Delete
-                  </Button>
+                  {isAdmin && (
+                    <Button
+                      variant="secondary"
+                      onClick={() => {
+                        setEditingProduct(product);
+                        setModalOpen(true);
+                      }}
+                    >
+                      Edit
+                    </Button>
+                  )}
+                  {isAdmin && (
+                    <Button
+                      variant="danger"
+                      onClick={() => setDeleteTarget(product)}
+                    >
+                      Delete
+                    </Button>
+                  )}
                 </div>
               </td>
             </tr>

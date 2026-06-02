@@ -4,10 +4,13 @@
 /home/taha/taha/Inventory_Manager/backend/src/main/java/com/inventorymanager/auth/AuthServiceImpl.java
 /home/taha/taha/Inventory_Manager/backend/src/main/java/com/inventorymanager/auth/JwtUtil.java
 /home/taha/taha/Inventory_Manager/backend/src/main/java/com/inventorymanager/auth/User.java
+/home/taha/taha/Inventory_Manager/backend/src/main/java/com/inventorymanager/auth/UserController.java
 /home/taha/taha/Inventory_Manager/backend/src/main/java/com/inventorymanager/auth/UserRepository.java
 /home/taha/taha/Inventory_Manager/backend/src/main/java/com/inventorymanager/auth/dto/AuthResponse.java
 /home/taha/taha/Inventory_Manager/backend/src/main/java/com/inventorymanager/auth/dto/LoginRequest.java
 /home/taha/taha/Inventory_Manager/backend/src/main/java/com/inventorymanager/auth/dto/RegisterRequest.java
+/home/taha/taha/Inventory_Manager/backend/src/main/java/com/inventorymanager/auth/dto/UpdateRoleRequest.java
+/home/taha/taha/Inventory_Manager/backend/src/main/java/com/inventorymanager/auth/dto/UserResponse.java
 /home/taha/taha/Inventory_Manager/backend/src/main/java/com/inventorymanager/category/Category.java
 /home/taha/taha/Inventory_Manager/backend/src/main/java/com/inventorymanager/category/CategoryController.java
 /home/taha/taha/Inventory_Manager/backend/src/main/java/com/inventorymanager/category/CategoryRepository.java

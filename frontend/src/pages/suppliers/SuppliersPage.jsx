@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useAuth } from '../../context/AuthContext';
 import { createSupplier, deleteSupplier, listSuppliers, updateSupplier } from '../../api/suppliers';
 import Button from '../../components/Button';
 import ConfirmDialog from '../../components/ConfirmDialog';
@@ -9,6 +10,7 @@ import Table from '../../components/Table';
 import SupplierModal from './SupplierModal';
 
 const SuppliersPage = () => {
+  const { isAdmin } = useAuth();
   const [suppliers, setSuppliers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -88,7 +90,7 @@ const SuppliersPage = () => {
       <PageHeader
         title="Suppliers"
         description="Maintain supplier records used to create restocking orders."
-        actions={[
+        actions={isAdmin ? [
           <Button
             key="add-supplier"
             onClick={() => {
@@ -98,7 +100,7 @@ const SuppliersPage = () => {
           >
             Add Supplier
           </Button>,
-        ]}
+        ] : []}
       />
 
       {error ? <div className="mb-4"><ErrorState message={error} onRetry={loadData} /></div> : null}
@@ -114,18 +116,22 @@ const SuppliersPage = () => {
             <td className="px-4 py-4 text-sm text-slate-600">{supplier.address || '-'}</td>
             <td className="px-4 py-4 text-right">
               <div className="flex justify-end gap-2">
-                <Button
-                  variant="secondary"
-                  onClick={() => {
-                    setEditingSupplier(supplier);
-                    setModalOpen(true);
-                  }}
-                >
-                  Edit
-                </Button>
-                <Button variant="danger" onClick={() => setDeleteTarget(supplier)}>
-                  Delete
-                </Button>
+                {isAdmin && (
+                  <Button
+                    variant="secondary"
+                    onClick={() => {
+                      setEditingSupplier(supplier);
+                      setModalOpen(true);
+                    }}
+                  >
+                    Edit
+                  </Button>
+                )}
+                {isAdmin && (
+                  <Button variant="danger" onClick={() => setDeleteTarget(supplier)}>
+                    Delete
+                  </Button>
+                )}
               </div>
             </td>
           </tr>
