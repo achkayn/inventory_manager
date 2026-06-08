@@ -36,15 +36,15 @@ const RegisterPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 px-4 py-10 sm:px-6 lg:px-8">
-      <div className="mx-auto grid min-h-[calc(100vh-5rem)] max-w-6xl overflow-hidden rounded-[2rem] bg-white shadow-soft lg:grid-cols-[0.95fr_1.05fr]">
+    <div className="min-h-screen bg-gray-950 px-4 py-10 sm:px-6 lg:px-8">
+      <div className="mx-auto grid min-h-[calc(100vh-5rem)] max-w-6xl overflow-hidden bg-white shadow-soft lg:grid-cols-[0.95fr_1.05fr]">
         <div className="flex items-center justify-center bg-[radial-gradient(circle_at_bottom_left,_rgba(34,197,94,0.18),_transparent_40%),linear-gradient(135deg,_#020617_0%,_#111827_60%,_#0f172a_100%)] px-8 py-10 text-white sm:px-12">
           <div className="max-w-md">
             <p className="text-xs uppercase tracking-[0.32em] text-emerald-200">Create account</p>
             <h1 className="mt-5 text-4xl font-semibold leading-tight">
               Start managing inventory from a single, structured frontend.
             </h1>
-            <p className="mt-5 text-sm leading-6 text-slate-300">
+            <p className="mt-5 text-sm leading-6 text-gray-300">
               Register once and move into the operational dashboard with products, suppliers, and
               order workflows ready to use.
             </p>
@@ -54,11 +54,11 @@ const RegisterPage = () => {
         <div className="flex items-center justify-center px-6 py-10 sm:px-10">
           <div className="w-full max-w-md">
             <div className="mb-8">
-              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-slate-500">
+              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-gray-500">
                 Join now
               </p>
-              <h2 className="mt-2 text-3xl font-semibold text-slate-900">Register</h2>
-              <p className="mt-2 text-sm text-slate-600">Create your inventory manager account.</p>
+              <h2 className="mt-2 text-3xl font-semibold text-gray-900">Register</h2>
+              <p className="mt-2 text-sm text-gray-600">Create your inventory manager account.</p>
             </div>
 
             {error ? <ErrorState message={error} /> : null}
@@ -109,9 +109,9 @@ const RegisterPage = () => {
               </Button>
             </form>
 
-            <p className="mt-6 text-sm text-slate-600">
+            <p className="mt-6 text-sm text-gray-600">
               Already have an account?{' '}
-              <Link to="/login" className="font-semibold text-slate-900 hover:underline">
+              <Link to="/login" className="font-semibold text-gray-900 hover:underline">
                 Login
               </Link>
             </p>
