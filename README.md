@@ -376,6 +376,78 @@ Passwords are hashed with `BCryptPasswordEncoder`. Tokens are signed with HMAC-S
 
 ---
 
+## Deployment
+
+The application is deployed on an **Oracle Cloud Infrastructure (OCI)** Ubuntu instance, running alongside other services without conflicts. All three containers (PostgreSQL, backend, frontend) are isolated using Docker and share a common internal bridge network (`web-network`) with Nginx Proxy Manager, which handles all inbound traffic. No host ports are exposed — containers are only reachable through the reverse proxy.
+
+Public access is routed via **Cloudflare Tunnels**, which handle DNS, SSL termination, and HTTPS automatically:
+
+| Service | URL |
+|---------|-----|
+| Frontend | https://inventory-manager.tahableu.me |
+| Backend API | https://api-inventory-manager.tahableu.me |
+
+Nginx Proxy Manager forwards requests to the containers by name (`inventory-frontend:80` and `inventory-backend:8080`) over the internal Docker network — no IP addresses or open firewall ports required.
+
+The production `docker-compose.yaml` differs from the local one in three ways: all `ports:` mappings are replaced with `expose:` (internal only), the frontend build arg `VITE_API_URL` is set to the production API domain, and the Docker network is declared as `external: true` to attach to the shared `web-network`.
+
+---
+
+## CI/CD pipeline
+
+The pipeline is defined in `.github/workflows/ci.yml` and triggers automatically on every push or pull request to the `main` branch. It runs four jobs in sequence:
+
+```
+push to main
+     │
+     ├─► Backend — Build & Test   ─┐
+     │   (Maven clean verify)      ├─► Docker — Build & Push ──► Deploy — OCI Server
+     └─► Frontend — Build         ─┘   (GHCR)                    (SSH)
+         (npm ci + npm run build)
+```
+
+### Job 1 & 2 — Validate (parallel)
+
+The backend job runs `mvn -B clean verify`, which compiles the code and executes the full test suite including unit tests and integration tests. The frontend job runs `npm ci` followed by `npm run build` to verify the React app compiles cleanly. Both jobs run in parallel on GitHub-hosted Ubuntu runners. If either fails, the pipeline stops and no deployment occurs.
+
+### Job 3 — Docker Build & Push
+
+Once both validation jobs pass, Docker images are built for the backend and frontend and pushed to **GitHub Container Registry** (`ghcr.io`) using the built-in `GITHUB_TOKEN` — no external registry account needed. Each image is tagged with both the commit SHA (for traceability) and `latest` (for the deploy step to pull).
+
+### Job 4 — Deploy
+
+The deploy job SSH-es directly into the OCI server using three repository secrets:
+
+| Secret | Purpose |
+|--------|---------|
+| `OCI_HOST` | Server public IP |
+| `OCI_USER` | SSH username (`ubuntu`) |
+| `OCI_SSH_KEY` | Private SSH key (ED25519) |
+
+No self-hosted runner or agent is installed on the server. GitHub's own runners initiate the connection using the `appleboy/ssh-action`, then execute the following on the server:
+
+```bash
+cd ~/main-server/inventory-manager
+git pull origin main
+docker compose pull
+docker compose up -d --build
+docker image prune -f
+```
+
+This pulls the latest code, rebuilds the containers with the new images, restarts only the affected services with zero-downtime rolling replacement, and cleans up dangling images to free disk space.
+
+### Adding the pipeline to a fork
+
+To use the CD pipeline in your own deployment:
+
+1. Fork the repository
+2. Go to **Settings → Secrets and variables → Actions**
+3. Add the three secrets: `OCI_HOST`, `OCI_USER`, `OCI_SSH_KEY`
+4. Update the `VITE_API_URL` build arg in `docker-compose.yaml` to your own domain
+5. Push to `main` — the pipeline runs automatically
+
+---
+
 ## Using the application
 
 ### Managing stock
