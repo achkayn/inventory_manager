@@ -9,24 +9,30 @@ services:
       POSTGRES_DB: inventorydb
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
-    ports:
-      - "5432:5432"
+#    ports:
+#      - "5432:5432"
+    expose:
+      - "5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - inventory_postgres_data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres -d inventorydb"]
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - web-network
 
-  # ── Backend (Spring Boot) ─────────────────────────────────
+  # ── Backend (Spring Boot)
   backend:
     build:
       context: ./backend
     container_name: inventory-backend
     restart: always
-    ports:
-      - "8080:8080"
+#    ports:
+#      - "8080:8080"
+    expose:
+       - "8080"
     environment:
       # Override application.properties — service name replaces localhost
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/inventorydb
@@ -39,6 +45,8 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+    networks:
+      - web-network
 
   # ── Frontend (React → nginx) ──────────────────────────────
   frontend:
@@ -46,13 +54,23 @@ services:
       context: ./frontend
       args:
         # Browser-visible URL — must be reachable from the user's machine
-        VITE_API_URL: http://localhost:8080/api
+        # VITE_API_URL: http://localhost:8080/api
+        VITE_API_URL: https://api-inventory-manager.tahableu.me/api
     container_name: inventory-frontend
     restart: always
-    ports:
-      - "3000:80"
+#    ports:
+#      - "3000:80"
+    expose:
+      - "80"
     depends_on:
       - backend
+    networks:
+      - web-network
 
 volumes:
-  postgres_data:
+  inventory_postgres_data:
+
+networks:
+  web-network:
+    external: true
+    name: web-network

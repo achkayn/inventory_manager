@@ -10,7 +10,7 @@ COPY src ./src
 RUN mvn clean package -DskipTests -B
 
 # ── Stage 2: runtime ─────────────────────────────────────────
-FROM eclipse-temurin:17-jre-alpine
+FROM eclipse-temurin:17-jre-jammy
 WORKDIR /app
 
 COPY --from=build /app/target/inventory-manager-*.jar app.jar

@@ -116,3 +116,23 @@ jobs:
           labels: ${{ steps.meta-frontend.outputs.labels }}
           cache-from: type=gha,scope=frontend
           cache-to: type=gha,scope=frontend,mode=max
+
+  # ── 4. Deploy to OCI ──────────────────────────────────────────────────────
+  deploy:
+    name: Deploy — OCI Server
+    needs: [docker]
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.OCI_HOST }}
+          username: ${{ secrets.OCI_USER }}
+          key: ${{ secrets.OCI_SSH_KEY }}
+          script: |
+            cd ~/main-server/inventory-manager
+            git pull origin main
+            docker compose pull
+            docker compose up -d --build
+            docker image prune -f
