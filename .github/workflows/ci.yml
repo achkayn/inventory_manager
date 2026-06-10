@@ -11,7 +11,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  # ── 1. Backend: build + test ───────────────────────────────────────────────
+  # ── 1. Backend: build + test
   test-backend:
     name: Backend — Build & Test
     runs-on: ubuntu-latest
@@ -30,7 +30,7 @@ jobs:
         working-directory: backend
         run: mvn -B clean verify
 
-  # ── 2. Frontend: install + build ───────────────────────────────────────────
+  # ── 2. Frontend: install + build
   build-frontend:
     name: Frontend — Build
     runs-on: ubuntu-latest
@@ -53,7 +53,7 @@ jobs:
         working-directory: frontend
         run: npm run build
 
-  # ── 3. Docker: build + push to GHCR (main only) ───────────────────────────
+  # ── 3. Docker: build + push to GHCR (main only)
   docker:
     name: Docker — Build & Push
     needs: [test-backend, build-frontend]
@@ -77,7 +77,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      # Backend image ──────────────────────────────────────────────────────────
+      # Backend image
       - name: Backend image tags
         id: meta-backend
         uses: docker/metadata-action@v5
@@ -97,7 +97,7 @@ jobs:
           cache-from: type=gha,scope=backend
           cache-to: type=gha,scope=backend,mode=max
 
-      # Frontend image ─────────────────────────────────────────────────────────
+      # Frontend image
       - name: Frontend image tags
         id: meta-frontend
         uses: docker/metadata-action@v5
